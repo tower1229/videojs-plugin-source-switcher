@@ -26,8 +26,7 @@ videojs.registerComponent("ResolutionMenuItem", ResolutionMenuItem);
 const MenuButton = videojs.getComponent("MenuButton");
 class ResolutionMenuButton extends MenuButton {
   constructor(player, options) {
-    super(player, options);
-    options.title = "test";
+    super(player);
     this.controlText("Quality");
     this.on(player, "loadstart", (e) => this.updateLabel(e));
     this.on(player, "updateSources", (e) => {
@@ -58,7 +57,7 @@ class ResolutionMenuButton extends MenuButton {
   }
   createItems() {
     console.log("createItems");
-    this.sources = this.player().getGroupedSrc();
+    this.sources = this.player().groupedSrc;
     const items = [];
     const list = this.sources && this.sources.label || {};
     for (let key in list) {
@@ -79,15 +78,12 @@ class ResolutionMenuButton extends MenuButton {
   }
 }
 videojs.registerComponent("ResolutionMenuButton", ResolutionMenuButton);
-const version = "0.0.1";
+const version = "0.0.2";
 var plugin = "";
 const Plugin = videojs.getPlugin("plugin");
 class SwitcherPlugin extends Plugin {
-  constructor(player, options) {
-    super(player);
-    const settings = videojs.mergeOptions({
-      ui: true
-    }, options);
+  constructor(player, options = {}) {
+    super(player, options);
     player.updateSrc = function(src) {
       if (!Array.isArray(src) && src.length) {
         return player.src();
@@ -111,7 +107,7 @@ class SwitcherPlugin extends Plugin {
       player.trigger("resolutionchange");
       return player;
     };
-    player.currentResolution = function(label, customSourcePicker) {
+    player.currentResolution = function(label) {
       if (label == null) {
         return this.currentResolutionState;
       }
@@ -124,7 +120,7 @@ class SwitcherPlugin extends Plugin {
       if (!isPaused && this.player().options_.bigPlayButton) {
         this.player().bigPlayButton.hide();
       }
-      player.setSourcesSanitized(sources, label, customSourcePicker || settings.customSourcePicker).one("loadeddata", function() {
+      player.setSourcesSanitized(sources, label).one("loadeddata", function() {
         player.currentTime(currentTime);
         if (!isPaused) {
           player.play();
@@ -135,17 +131,11 @@ class SwitcherPlugin extends Plugin {
       });
       return player;
     };
-    player.getGroupedSrc = function() {
-      return this.groupedSrc;
-    };
-    player.setSourcesSanitized = function(sources, label, customSourcePicker) {
+    player.setSourcesSanitized = function(sources, label) {
       this.currentResolutionState = {
         label,
         sources
       };
-      if (typeof customSourcePicker === "function") {
-        return customSourcePicker(player, sources, label);
-      }
       player.src(sources.map(function(src) {
         return { src: src.src, type: src.type, res: src.res };
       }));
@@ -174,12 +164,12 @@ class SwitcherPlugin extends Plugin {
       return resolutions;
     }
     function chooseSrc(groupedSrc, src) {
-      let selectedRes = settings["default"];
+      let selectedRes = options.default || "low";
       let selectedLabel = "";
       if (selectedRes === "high") {
         selectedRes = src[0].res;
         selectedLabel = src[0].label;
-      } else if (selectedRes === "low" || selectedRes == null || !groupedSrc.res[selectedRes]) {
+      } else if (selectedRes === "low" || !groupedSrc.res[selectedRes]) {
         selectedRes = src[src.length - 1].res;
         selectedLabel = src[src.length - 1].label;
       } else if (groupedSrc.res[selectedRes]) {
@@ -187,10 +177,8 @@ class SwitcherPlugin extends Plugin {
       }
       return { res: selectedRes, label: selectedLabel, sources: groupedSrc.res[selectedRes] };
     }
-    if (settings.ui) {
-      let menuButton = new ResolutionMenuButton(player, settings);
-      player.controlBar.el_.insertBefore(menuButton.el_, player.controlBar.getChild("fullscreenToggle").el_);
-    }
+    let menuButton = new ResolutionMenuButton(player);
+    player.controlBar.el_.insertBefore(menuButton.el_, player.controlBar.getChild("fullscreenToggle").el_);
     if (player.options_.sources.length > 1) {
       player.updateSrc(player.options_.sources);
     }
