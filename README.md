@@ -4,6 +4,10 @@ videojs 视频源切换插件.基于[videojs-resolution-switcher]()项目二次�
 
 ![preivew](public/img/album.png)
 
+## videojs 系列项目
+
+- [videojs-plugin-marker](https://github.com/tower1229/videojs-plugin-marker) : videojs 进度条打点插件
+
 ## Install
 
 ```bash
