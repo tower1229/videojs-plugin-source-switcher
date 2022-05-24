@@ -1,5 +1,5 @@
-import videojs from "video.js";
-const MenuItem = videojs.getComponent("MenuItem");
+import videojs$1 from "video.js";
+const MenuItem = videojs$1.getComponent("MenuItem");
 class ResolutionMenuItem extends MenuItem {
   constructor(player, options) {
     const label = options.label;
@@ -22,8 +22,8 @@ class ResolutionMenuItem extends MenuItem {
   }
 }
 ResolutionMenuItem.prototype.contentElType = "button";
-videojs.registerComponent("ResolutionMenuItem", ResolutionMenuItem);
-const MenuButton = videojs.getComponent("MenuButton");
+videojs$1.registerComponent("ResolutionMenuItem", ResolutionMenuItem);
+const MenuButton = videojs$1.getComponent("MenuButton");
 class ResolutionMenuButton extends MenuButton {
   constructor(player, options) {
     super(player);
@@ -38,7 +38,7 @@ class ResolutionMenuButton extends MenuButton {
   createEl() {
     const el = super.createEl();
     this.labelElId_ = "vjs-playback-rate-value-label-" + this.id_;
-    this.labelEl_ = videojs.dom.createEl("div", {
+    this.labelEl_ = videojs$1.dom.createEl("div", {
       className: "vjs-resolution-button-label",
       id: this.labelElId_,
       textContent: ""
@@ -77,9 +77,15 @@ class ResolutionMenuButton extends MenuButton {
     this.labelEl_.textContent = this.currentSelection ? this.currentSelection.label : "";
   }
 }
-videojs.registerComponent("ResolutionMenuButton", ResolutionMenuButton);
-const version = "0.0.2";
+videojs$1.registerComponent("ResolutionMenuButton", ResolutionMenuButton);
+const version = "0.0.3";
 var plugin = "";
+let videojs;
+if (window.videojs) {
+  videojs = window.videojs;
+} else {
+  videojs = videojs$1;
+}
 const Plugin = videojs.getPlugin("plugin");
 class SwitcherPlugin extends Plugin {
   constructor(player, options = {}) {
@@ -175,7 +181,11 @@ class SwitcherPlugin extends Plugin {
       } else if (groupedSrc.res[selectedRes]) {
         selectedLabel = groupedSrc.res[selectedRes][0].label;
       }
-      return { res: selectedRes, label: selectedLabel, sources: groupedSrc.res[selectedRes] };
+      return {
+        res: selectedRes,
+        label: selectedLabel,
+        sources: groupedSrc.res[selectedRes]
+      };
     }
     let menuButton = new ResolutionMenuButton(player);
     player.controlBar.el_.insertBefore(menuButton.el_, player.controlBar.getChild("fullscreenToggle").el_);
