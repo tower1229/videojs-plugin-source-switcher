@@ -78,11 +78,12 @@ class ResolutionMenuButton extends MenuButton {
   }
 }
 videojs$1.registerComponent("ResolutionMenuButton", ResolutionMenuButton);
-const version = "0.0.3";
+const version = "0.0.4";
 var plugin = "";
 let videojs;
 if (window.videojs) {
   videojs = window.videojs;
+  console.warn(`SwitcherPlugin:\u68C0\u6D4B\u5230window.videojs`);
 } else {
   videojs = videojs$1;
 }
