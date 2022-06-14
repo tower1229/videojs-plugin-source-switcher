@@ -17,7 +17,6 @@ class ResolutionMenuItem extends MenuItem {
   }
   update() {
     const selectd = this.label === this.player().currentResolution().label;
-    console.log("menuitem update", selectd);
     this.selected(selectd);
   }
 }
@@ -30,7 +29,6 @@ class ResolutionMenuButton extends MenuButton {
     this.controlText("Quality");
     this.on(player, "loadstart", (e) => this.updateLabel(e));
     this.on(player, "updateSources", (e) => {
-      console.log("player.on('updateSources')");
       this.updateLabel(e);
       this.update();
     });
@@ -56,13 +54,11 @@ class ResolutionMenuButton extends MenuButton {
     return `vjs-resolution-button ${super.buildWrapperCSSClass()}`;
   }
   createItems() {
-    console.log("createItems");
     this.sources = this.player().groupedSrc;
     const items = [];
     const list = this.sources && this.sources.label || {};
     for (let key in list) {
       if (list.hasOwnProperty(key)) {
-        console.log(key);
         items.push(new ResolutionMenuItem(this.player(), {
           label: key,
           src: list[key],
@@ -78,7 +74,7 @@ class ResolutionMenuButton extends MenuButton {
   }
 }
 videojs$1.registerComponent("ResolutionMenuButton", ResolutionMenuButton);
-const version = "0.0.5";
+const version = "0.0.6";
 var plugin = "";
 let videojs;
 if (window.videojs) {
@@ -133,7 +129,6 @@ class SwitcherPlugin extends Plugin {
           player.play();
         }
         player.trigger("updateSources");
-        console.log("player.trigger('updateSources');");
         player.trigger("resolutionchange");
       });
       return player;
