@@ -1,6 +1,6 @@
 # videojs-plugin-source-switcher
 
-videojs 视频源切换插件.基于[videojs-resolution-switcher]()项目二次开发, 支持 videojs^7.0.0; 更换构建工具为 Vite.
+videojs 视频源切换插件.基于[videojs-resolution-switcher]()项目二次开发; 更换构建工具为 Vite，支持 video.js@7.x。
 
 ![preivew](public/img/album.png)
 
